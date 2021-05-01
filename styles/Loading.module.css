@@ -1,0 +1,10 @@
+.center {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+
+.logo {
+  height: 200px;
+  margin-bottom: 10px;
+}

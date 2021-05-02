@@ -1,12 +1,18 @@
 import Head from "next/head";
 import styled from "styled-components";
-import Button from "@material-ui/core/Button";
 import GoogleButton from "react-google-button";
 import { auth, provider } from "../firebase";
+import { useRouter } from "next/router";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const Login = () => {
-  const signin = () => {
-    auth.signInWithPopup(provider).catch(alert);
+  const router = useRouter();
+
+  const [user] = useAuthState(auth);
+
+  const signin = async () => {
+    await auth.signInWithPopup(provider).catch(alert);
+    router.push("/");
   };
 
   return (

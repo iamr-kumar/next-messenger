@@ -5,6 +5,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
 import * as EmailValidator from "email-validator";
 import { auth, db } from "../firebase";
+import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import Chat from "./Chat";
@@ -13,9 +14,11 @@ const Sidebar = () => {
   const [user] = useAuthState(auth);
   const userChatRef = db
     .collection("chats")
-    .where("users", "array-contains", user.email);
+    .where("users", "array-contains", user?.email);
 
   const [chatsSnapshot] = useCollection(userChatRef);
+
+  const router = useRouter();
 
   const createChat = () => {
     const input = prompt(
@@ -36,6 +39,11 @@ const Sidebar = () => {
     }
   };
 
+  const signOut = async () => {
+    await auth.signOut();
+    router.push("/login");
+  };
+
   const checkChatExists = (recipientEmail) => {
     return !!chatsSnapshot?.docs.find(
       (chat) =>
@@ -46,7 +54,7 @@ const Sidebar = () => {
   return (
     <Container>
       <Header>
-        <UserAvatar onClick={() => auth.signOut()} src={user?.photoURL} />
+        <UserAvatar onClick={signOut} src={user?.photoURL} />
         <IconsContainer>
           <IconButton>
             <ChatIcon />
@@ -73,7 +81,20 @@ const Sidebar = () => {
 
 export default Sidebar;
 
-const Container = styled.div``;
+const Container = styled.div`
+  flex: 0.45;
+  border-right: 1px solid whitesmoke;
+  height: 100vh;
+  min-width: 300px;
+  max-width: 350px;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none; //IE and Edge
+  scrollbar-width: none; //Firefox
+`;
 
 const Header = styled.div`
   display: flex;

@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Sidebar from "./../components/Sidebar";
 import styled from "styled-components";
+import Button from "@material-ui/core/Button";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <Sidebar />
       <ChatContainer>
         <h2>Enter an email to start chatting...</h2>
+        <StartChatButton>Start Chat</StartChatButton>
       </ChatContainer>
     </Container>
   );
@@ -24,6 +26,7 @@ const Container = styled.div`
 const ChatContainer = styled.div`
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: scroll;
@@ -38,5 +41,14 @@ const ChatContainer = styled.div`
     font-family: "Roboto", sans-serif;
     color: gray;
     font-weight: 200;
+  }
+`;
+
+const StartChatButton = styled(Button)`
+  &&& {
+    padding: 10px;
+    border-top: 1px solid whitesmoke;
+    border-bottom: 1px solid whitesmoke;
+    box-shadow: 0px 4px 14px -3px rgba(0, 0, 0.2, 0.2);
   }
 `;

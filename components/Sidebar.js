@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Avatar, Button, IconButton } from "@material-ui/core";
+import { Avatar, Button, IconButton, Menu, MenuItem } from "@material-ui/core";
 import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import Chat from "./Chat";
+import { useState } from "react";
 
 const Sidebar = () => {
   const [user] = useAuthState(auth);
@@ -17,6 +18,7 @@ const Sidebar = () => {
     .where("users", "array-contains", user?.email);
 
   const [chatsSnapshot] = useCollection(userChatRef);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const router = useRouter();
 
@@ -51,17 +53,34 @@ const Sidebar = () => {
     );
   };
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Container>
       <Header>
-        <UserAvatar onClick={signOut} src={user?.photoURL} />
+        <UserAvatar src={user?.photoURL} onClick={() => router.push("/")} />
         <IconsContainer>
-          <IconButton>
+          <IconButton onClick={createChat}>
             <ChatIcon />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleClick}>
             <MoreVertIcon />
           </IconButton>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={signOut}>Logout</MenuItem>
+          </Menu>
         </IconsContainer>
       </Header>
 
@@ -69,8 +88,6 @@ const Sidebar = () => {
         <SearchIcon />
         <SearchInput placeholder="Search in chats" />
       </Search>
-
-      <SidebarButton onClick={createChat}>Start a new chat</SidebarButton>
 
       {chatsSnapshot?.docs.map((chat) => (
         <Chat key={chat.id} id={chat.id} users={chat.data().users} />
